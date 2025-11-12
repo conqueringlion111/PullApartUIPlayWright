@@ -1,9 +1,6 @@
 package com.pullapart.tests;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserType;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.*;
 import com.pullapart.utils.ConfigReader;
 import org.testng.annotations.*;
 
