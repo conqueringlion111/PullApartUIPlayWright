@@ -1,0 +1,14 @@
+{
+  "testSearchInventory": [
+    {
+      "location": "Atlanta South",
+      "make": "HONDA",
+      "model": "CIVIC DEL SOL"
+    },
+    {
+      "location": "Atlanta North",
+      "make": "INFINITI",
+      "model": "G35"
+    }
+  ]
+}
