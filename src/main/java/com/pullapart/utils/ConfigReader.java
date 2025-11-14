@@ -10,10 +10,17 @@ public class ConfigReader {
     public static void loadProperties() {
         if (properties == null) {
             properties = new Properties();
-            try (FileInputStream input = new FileInputStream("src/test/resources/config/testconfig.properties")) {
+
+            // get environment from system property, default to "qa"
+            String env = System.getProperty("env", "prod").toLowerCase();
+            // 2. Build file path
+            String filePath = "src/test/resources/config/" + env + ".properties";
+
+            try (FileInputStream input = new FileInputStream(filePath)) {
                 properties.load(input);
+                System.out.println("Loaded environment: " + env);
             } catch (IOException e) {
-                throw new RuntimeException("Failed to load testconfig.properties file", e);
+                throw new RuntimeException("Failed to load environment properties file: " + filePath, e);
             }
         }
     }
@@ -22,6 +29,7 @@ public class ConfigReader {
         if (properties == null) {
             loadProperties();
         }
-        return properties.getProperty(key);
+        // system property > env properties file
+        return System.getProperty(key, properties.getProperty(key));
     }
 }
