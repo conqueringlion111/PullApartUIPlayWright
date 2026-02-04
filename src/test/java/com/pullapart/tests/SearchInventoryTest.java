@@ -7,10 +7,10 @@ import org.testng.annotations.Test;
 public class SearchInventoryTest extends BaseTest {
 
     @Test(dataProvider = "dataProvider", groups = {"basicsearch"}, description = "test to search inventory")
-    public void testSearchInventory(String location, String make, String model) {
+    public void testSearchInventory(String location, String make, String model, String result) {
 
         InventorySearchPage searchPage = new InventorySearchPage(page);
-        searchPage.searchInventory(location, make, model);
+        searchPage.searchInventory(location, make, model, result);
         searchPage.verifySearchSuccessful(make, model);
     }
 }
