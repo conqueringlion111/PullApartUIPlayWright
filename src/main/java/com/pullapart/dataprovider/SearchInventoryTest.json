@@ -1,14 +1,16 @@
 {
   "testSearchInventory": [
     {
-      "location": "Atlanta South",
-      "make": "HONDA",
-      "model": "CIVIC DEL SOL"
+      "location": "Atlanta North",
+      "make": "INFINITI",
+      "model": "G37",
+      "result": "G37 COUPE"
     },
     {
       "location": "Atlanta North",
-      "make": "INFINITI",
-      "model": "G35"
+      "make": "NISSAN",
+      "model": "QUEST",
+      "result": "QUEST"
     }
   ]
 }
