@@ -2,68 +2,70 @@ package com.pullapart.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Response;
 import com.microsoft.playwright.options.AriaRole;
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import com.pullapart.locators.InventorySearchPageLocators;
 import org.testng.Assert;
 
-import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-
 public class InventorySearchPage extends BasePage {
-
+    private final InventorySearchPageLocators loc;
     public InventorySearchPage(Page page) {
         super(page);
+        this.loc = new InventorySearchPageLocators(page);
     }
 
-    public void searchInventory(String location, String make, String model, String result) {
-        //Find the Select Location combo box and click
-        InventorySearchPageLocators isp = new InventorySearchPageLocators(page);
-        Locator comboSelect = isp.getSelectionCombo("Select Location");
-        comboSelect.isVisible();
-        comboSelect.click();
-        //Find the input field and fill location
-        Locator searchBox = isp.getSearchBox();
-        searchBox.fill(location);
-        //Click on the searched option
-        Locator selection = isp.getSearchResult(location);
-        selection.click();
+    private void selectFromCombo(String comboName, String valueToType, String optionToClickExact) {
+        Locator combo = loc.getSelectionCombo(comboName);
+        assertThat(combo).isVisible();
+        combo.click();
 
-        //Select Make
-        Locator selectMake = isp.getSelectionCombo("Select Make");
-        selectMake.click();
-        Locator makeSearchBox = isp.getSearchBox();
-        makeSearchBox.fill(make);
-        Locator makeSelection = isp.getSearchResult(make);
-        makeSelection.click();
+        Locator search = loc.getSearchBox();
+        assertThat(search).isVisible();
+        search.fill(valueToType);
 
-        //Select Model
-        Locator selectModel = isp.getSelectionCombo("Select Model");
-        selectModel.click();
-        Locator modelSearchBox = isp.getSearchBox();
-        modelSearchBox.fill(model);
-        Locator modelSelection = isp.getSearchResult(result);
-        modelSelection.click();
-
-        //Click on search button
-        Locator button = isp.getSearchButton();
-        button.click();
+        Locator option = loc.getSearchResult(optionToClickExact);
+        assertThat(option).isVisible();
+        option.click();
+    }
+    public void searchInventory(String location, String make, String model, String resultOptionText) {
+        selectFromCombo("Select Location", location, location);
+        selectFromCombo("Select Make", make, make);
+        selectFromCombo("Select Model", model, resultOptionText);
+        loc.getSearchButton().click();
 
     }
 
-    public void verifySearchSuccessful(String make, String model) {
-        InventorySearchPageLocators searchPage = new InventorySearchPageLocators(page);
-        Response resp = page.waitForResponse(r -> r.url().startsWith("https://inventoryservice.pullapart.com/Model/OnYard")
-                        && r.status() == 200, searchPage::zeroSearchResult);
-        //see if search returned zero results
-        Locator zero = searchPage.zeroSearchResult();
-        if (zero.isVisible()) {
-            Assert.assertTrue(zero.isVisible());
-        } else {
-            Assert.assertTrue(searchPage.exactMatchResult().isVisible());
-            Locator rows = page.locator(InventorySearchPageLocators.RESULT_TABLE_ROLE_XPATH);
-            Locator makeModelRow = rows.filter(new Locator.FilterOptions().setHasText(make))
-                    .filter(new Locator.FilterOptions().setHasText(model));
-            assertThat(makeModelRow.first()).isVisible();
-        }
+    public void clickSearchAndWait() {
+        page.waitForResponse(
+                r -> r.url().contains("/Model/OnYard") && r.status() == 200,
+                () -> loc.getSearchButton().click()
+        );
+    }
+
+    public void openNewOnYardSearch() {
+        loc.newOnYardLink().click();
+    }
+
+    public void selectNewOnYardLocation(String location) {
+        loc.dropdown().click();
+        loc.listBox().waitFor();
+        page.getByRole(AriaRole.OPTION, new Page.GetByRoleOptions()
+                .setName(location).setExact(true)).click();
+    }
+
+    public void selectSevenDaysRadioButton() {
+        loc.SevenDaysRadio().click();
+    }
+
+    public void selectNewOnYardSearchButton() {
+        loc.newOnYardSearchButton().click();
+    }
+
+    public void verifyNewOnYardSearchSuccessful() {
+        //wait for the results container to appear
+        assertThat(loc.newOnYardResultsTable()).isVisible();
+        //assert one or more role of new on yard is returned
+        int returnedNewOnYardRoleCount = loc.newOnYardResultsTableRoles().count();
+        Assert.assertTrue(returnedNewOnYardRoleCount > 0, "zero returned for new on yard search");
     }
 }

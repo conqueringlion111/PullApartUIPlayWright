@@ -2,13 +2,12 @@ package com.pullapart.locators;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.AriaRole;
-import com.pullapart.pages.BasePage;
 import com.microsoft.playwright.Page;
 
-public class InventorySearchPageLocators extends BasePage {
-
+public class InventorySearchPageLocators {
+    protected final Page page;
     public InventorySearchPageLocators(Page page) {
-        super(page);
+        this.page = page;
     }
 
     public Locator getSelectionCombo(String selection) {
@@ -28,13 +27,49 @@ public class InventorySearchPageLocators extends BasePage {
     }
 
     public Locator zeroSearchResult() {
-        return page.getByText("Sorry, we couldn't");
+        return page.getByText("Sorry, we");
     }
 
     public Locator exactMatchResult() {
         return page.getByText("Exact Match");
     }
 
-    public static final String RESULT_TABLE_ROLE_XPATH = "//div[contains(@data-sortable-table, 'inventorySearchExact')]//div[@class='fl-table']";
+
+
+    public Locator newOnYardLink() {
+        return page.locator("//div[contains(text(),'New On Yard')]");
+    }
+
+    public Locator dropdown() {
+        return page.locator("//span[@class='select2-selection select2-selection--multiple'][@role='combobox']");
+    }
+
+    public Locator listBox() {
+        return page.locator("ul[role='listbox'][id^='select2-location-'][id$='-results']:visible");
+    }
+
+    public Locator SevenDaysRadio() {
+        return page.locator("input#sevenDays");
+    }
+
+    public Locator newOnYardSearchButton() {
+        return page.locator("//div[@data-tab-content-id='newOnYard']//button[@class='button yellow']");
+    }
+
+    public Locator inventorySearchTable() {
+        return page.locator("//div[@data-search-result= 'inventorySearch']");
+    }
+
+    public Locator resultTableRole() {
+        return page.locator("//div[contains(@data-sortable-table, 'inventorySearchExact')]//div[@class='fl-table']");
+    }
+
+    public Locator newOnYardResultsTable() {
+        return page.locator("//div[starts-with(@data-sortable-table, 'newOnYardSearchExact')]");
+    }
+
+    public Locator newOnYardResultsTableRoles() {
+        return page.locator("//div[starts-with(@data-sortable-table, 'newOnYardSearchExact')]//div[@data-sortable-table-row='bodyLong']");
+    }
 
 }

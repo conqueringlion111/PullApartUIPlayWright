@@ -5,14 +5,15 @@ import com.pullapart.utils.ConfigReader;
 import com.pullapart.utils.JsonReader;
 import org.testng.annotations.*;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Paths;
 
 public class BaseTest {
 
     protected Playwright playwright;
     protected Browser browser;
     protected Page page;
+    protected BrowserContext context;
 
     @BeforeClass
     public void setUp() {
@@ -44,9 +45,12 @@ public class BaseTest {
 
     @BeforeMethod
     public void beforeMethod() {
-        // Open a fresh page for each test iteration
-        page = browser.newPage();
+        context = browser.newContext(new Browser.NewContextOptions().setViewportSize(null));
+        page = context.newPage();
         page.navigate(ConfigReader.get("baseUrl"));
+
+        context.tracing().start(new Tracing.StartOptions().setScreenshots(true)
+                .setSnapshots(true).setSources(true));
     }
 
     @DataProvider(name = "dataProvider")
@@ -58,7 +62,7 @@ public class BaseTest {
 
     @AfterMethod
     public void afterMethod() {
-        if (page != null) page.close();  // Close page after each test iteration
+        if (context != null) context.close();
     }
 
     @AfterClass
