@@ -12,5 +12,10 @@
       "model": "QUEST",
       "result": "QUEST"
     }
+  ],
+  "testSearchNewOnYardSevenDays": [
+    {
+      "location": "Atlanta North"
+    }
   ]
 }
